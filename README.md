@@ -1,46 +1,94 @@
-# Getting Started with Create React App
+# UserAlbums Component
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The `UserAlbums` component is responsible for fetching and rendering the albums of a particular user. Let's take a look at the code in detail:
 
-## Available Scripts
+```typescript
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Album } from '../models/Album';
 
-In the project directory, you can run:
+interface UserAlbumsProps {
+  userId: number;
+}
 
-### `npm start`
+const UserAlbums = ({ userId }: UserAlbumsProps) => {
+  const [albums, setAlbums] = useState<Album[]>([]);
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+  useEffect(() => {
+    const fetchAlbums = async () => {
+      const response = await axios.get<Album[]>(
+        `https://jsonplaceholder.typicode.com/users/${userId}/albums`
+      );
+      setAlbums(response.data);
+    };
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+    fetchAlbums();
+  }, [userId]);
 
-### `npm test`
+  return (
+    <div>
+      <h2>Albums</h2>
+      <ul>
+        {albums.map((album) => (
+          <li key={album.id}>
+            {album.title}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+*Props*
 
-### `npm run build`
+The UserAlbums component accepts a single prop, userId, which is a number representing the ID of the user whose albums should be fetched and rendered.
+```typescript
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+interface UserAlbumsProps {
+  userId: number;
+}
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+State
+The component initializes the albums state variable using the useState hook, with an empty array of Album objects:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+const [albums, setAlbums] = useState<Album[]>([]);
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+useEffect
+The useEffect hook is used to fetch the user's albums from the API whenever the userId prop changes. The function inside the hook is an async function that sends an HTTP GET request to the JSONPlaceholder API to retrieve the albums for the selected user. The response from the API is stored in the response variable, and the setAlbums function is used to update the albums state variable with the data from the API response:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```typescript
+useEffect(() => {
+  const fetchAlbums = async () => {
+    const response = await axios.get<Album[]>(
+      `https://jsonplaceholder.typicode.com/users/${userId}/albums`
+    );
+    setAlbums(response.data);
+  };
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+  fetchAlbums();
+}, [userId]);
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```
 
-## Learn More
+Rendering
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+The component returns a div element containing an h2 element with the text "Albums", and a ul element that displays the user's albums as a list of li elements. The map function is used to iterate through the albums array and render an li element for each album. The key prop is set to the id property of the album, to help React efficiently update the list when changes occur. The title of the album is displayed using the title property of the album object:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```typescript
+
+return (
+  <div>
+    <h2>Albums</h2>
+    <ul>
+      {albums.map((album) => (
+        <li key={album.id}>
+          {album.title}
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+```
