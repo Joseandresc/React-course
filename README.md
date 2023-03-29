@@ -53,10 +53,12 @@ interface UserAlbumsProps {
 State
 The component initializes the albums state variable using the useState hook, with an empty array of Album objects:
 
+```typescript
 const [albums, setAlbums] = useState<Album[]>([]);
-
+```
 
 useEffect
+
 The useEffect hook is used to fetch the user's albums from the API whenever the userId prop changes. The function inside the hook is an async function that sends an HTTP GET request to the JSONPlaceholder API to retrieve the albums for the selected user. The response from the API is stored in the response variable, and the setAlbums function is used to update the albums state variable with the data from the API response:
 
 ```typescript
